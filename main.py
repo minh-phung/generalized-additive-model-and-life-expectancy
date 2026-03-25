@@ -31,7 +31,6 @@ predictor = ['CO2 emissions per capita',
              'Share of the labor force employed in agriculture',
              'Share of the population with access to electricity']
 
-# c:= continuous, d:= discrete
 target_discrete = np.full(len(target), False)
 predictor_discrete = np.full(len(predictor), False)
 predictor_discrete[7] = True
@@ -77,27 +76,18 @@ info_score_file = 'info score'
 
 info_index = pd.MultiIndex.from_product([range(0, k), target, predictor])
 
-info_val = ['corr', 'mic_3']
+info_val = ['corr', 'mic_q_10']
 info = pd.DataFrame(index=info_index, columns = info_val)
 
 for i in range(0, 1): # fix k
     train_set = df.iloc[cv_train[i]]
 
-    for each in info_val:
-        each_index = info.loc[i].index.to_numpy()
-        if each == 'corr':
-            info.loc[i,each] = info_score.corr_coef(each_index, train_set)
-        elif each.startswith('mic'):
-            try:
-                k_nn = int(each.split('_')[1])
-                info.loc[i,each] = info_score.mic(each_index,
-                                                  train_set,
-                                                  column_name,
-                                                  column_discrete,
-                                                  k_nn)
+    for each_val in info_val:
+        each_index = info.loc[i, each_val].index.to_frame(index = False).to_numpy()
 
-            except:
-                exit('mic issue')
+        info.loc[i, each_val] = info_score.compute(each_val, each_index, train_set,
+                                                   column_name, column_discrete)
 
+    print(info.loc[i])
 
 
