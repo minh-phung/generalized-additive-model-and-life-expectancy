@@ -10,7 +10,7 @@ def corr_coef(x, y,
 
 # -----------------------------------------------------------------------------
 
-def mic_c_ksg(x, y, x_discrete, y_discrete, k_value,
+def mi_c_ksg(x, y, x_discrete, y_discrete, k_value,
               variable_x = None, variable_y = None):
 
     if not x_discrete and not y_discrete:
@@ -20,7 +20,7 @@ def mic_c_ksg(x, y, x_discrete, y_discrete, k_value,
         return mutual_info
     return np.nan
 
-def mic_m_ross(x, y, x_discrete, y_discrete, k_value,
+def mi_m_ross(x, y, x_discrete, y_discrete, k_value,
                variable_x = None, variable_y = None):
 
     if x_discrete and not y_discrete:
@@ -49,7 +49,7 @@ def compute(value, index_pair, data,
                  variable_x = None, variable_y = None):
             return corr_coef(x, y)
 
-    elif value.startswith('mic'):
+    elif value.startswith('mi'):
         # "mic,type,parameter" (symmetric)
         # type:
         # c := continuous - continuous
@@ -58,10 +58,10 @@ def compute(value, index_pair, data,
         def func(x, y,
                  variable_x = None, variable_y = None):
             try:
-                _, mic_type, mic_param = value.split(',')
-                mic_param = int(mic_param)
+                _, mi_type, mi_param = value.split(',')
+                mi_param = int(mi_param)
             except:
-                raise ValueError("Invalid mic format")
+                raise ValueError("Invalid mi format")
 
             x_idx = np.where(variable_x == variable_list)[0]
             y_idx = np.where(variable_y == variable_list)[0]
@@ -69,10 +69,10 @@ def compute(value, index_pair, data,
             x_discrete = variable_discrete[x_idx]
             y_discrete = variable_discrete[y_idx]
 
-            if mic_type == 'c_ksg':
-                return mic_c_ksg(x, y, x_discrete, y_discrete, mic_param)
-            elif mic_type == 'm_ross':
-                return mic_m_ross(x, y, x_discrete, y_discrete, mic_param)
+            if mi_type == 'c_ksg':
+                return mi_c_ksg(x, y, x_discrete, y_discrete, mi_param)
+            elif mi_type == 'm_ross':
+                return mi_m_ross(x, y, x_discrete, y_discrete, mi_param)
             return np.nan
     else:
         raise ValueError("Unknown info_val parameter")
@@ -88,3 +88,6 @@ def compute(value, index_pair, data,
         result[i] = func(x, y, var1, var2)
 
     return result
+
+# -----------------------------------------------------------------------------
+

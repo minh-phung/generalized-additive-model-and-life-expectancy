@@ -26,21 +26,26 @@ def inner_join(key, path, out_name):
 
     return
 
-def plot_hist(data, path, tail = ''):
+def plot_hist(data, path, head = '', tail = ''):
 
     columns = data.columns
 
     for each in columns:
         plt.hist(data[each], bins='auto')
-        name = path + "/" + each + '_hist'
+
+        name = path + "/"
+        if head != '':
+            name += head + "_"
+        name += each + "_hist"
         if tail != '':
             name += "_" + tail
+
         plt.savefig(name)
         plt.close()
 
     return
 
-def plot_scatter(target, predictor, path, tail = ''):
+def plot_scatter(target, predictor, path, head = '', tail = ''):
 
     col_pred = predictor.columns
     col_targ = target.columns
@@ -52,9 +57,14 @@ def plot_scatter(target, predictor, path, tail = ''):
                         s = 10)
             plt.xlabel(each_pred)
             plt.ylabel(each_targ)
-            name = path + "/" + each_pred + "_scatter"
+
+            name = path + "/"
+            if head != '':
+                name += head + "_"
+            name += each_pred + "_scatter"
             if tail != '':
                 name += "_" + tail
+
             plt.savefig(name)
             plt.close()
 
