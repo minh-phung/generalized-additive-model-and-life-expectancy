@@ -19,7 +19,7 @@ preprocess.inner_join(['Code', 'Year'], data_file, name)
 df = pd.read_csv(name)
 print(df.columns)
 
-# -------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------
 
 target = np.array(["Life expectancy"])
 predictor = np.array(['CO2 emissions per capita',
@@ -43,7 +43,7 @@ predictor_discrete[7] = True
 column_name = np.concatenate((target, predictor))
 column_discrete = np.concatenate((target_discrete, predictor_discrete))
 
-# -------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------
 
 plot_file = 'data/plot'
 
@@ -53,7 +53,7 @@ preprocess.plot_hist(df[target], plot_file)
 preprocess.plot_scatter(df[target], df[predictor], plot_file)
 '''
 
-# -------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------
 # rolling cross validation
 
 sampling_file = 'sampling'
@@ -79,7 +79,7 @@ for each in os.listdir(sampling_file):
         elif each == name_search + "_test.csv":
             cv_test.append(dir_data)
 
-# -------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------
 info_name = "info/"
 
 info_index = pd.MultiIndex.from_product([range(0, k), target, predictor])
@@ -135,7 +135,7 @@ try:
 except:
     raise ValueError("info file issue")
 
-# -------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------
 
 info_plot_file = 'info/plot'
 
@@ -147,9 +147,9 @@ for cv_idx in range(0, k):
 
 info_mi_c['median'] = info_mi_c.median(axis=1)
 
-# -------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------
 
-workspace= 'model/workspace/'
+schedule_folder = 'model/workspace/schedule/'
 
 '''
 for cv_idx in range(0, k):
@@ -157,9 +157,24 @@ for cv_idx in range(0, k):
         model.scheduler.main(predictor, each_target,
                              info_corr.loc[cv_idx, 'corr'],
                              info_mi_c.loc[cv_idx, 'median'],
-                             workspace,
-                             head = each_target, tail = 'cv_' + str(cv_idx))
+                             schedule_folder,
+                             head = each_target, tail = '_cv_' + str(cv_idx))
 '''
 
-# -------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------
+
+checkpoint_folder = 'model/workspace/checkpoint/'
+result_folder = 'model/workspace/result/'
+
+
+for cv_idx in range(0, 1): # fix k
+    for each_target in target:
+        try:
+            schedule_each = pd.read_csv(schedule_folder + each_target + "_cv_" + str(cv_idx)+ ".csv")
+        except:
+            raise ValueError("schedule file issue")
+        model.compiler.process(schedule_each, checkpoint_folder, result_folder,
+                               df.loc[cv_train[cv_idx]], df.loc[cv_test[cv_idx]],
+                               head= each_target, tail='_cv_' + str(cv_idx))
+
 
