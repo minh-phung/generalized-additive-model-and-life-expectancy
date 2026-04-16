@@ -163,18 +163,22 @@ for cv_idx in range(0, k):
 
 # ----------------------------------------------------------------------------------------
 
-checkpoint_folder = 'model/workspace/checkpoint/'
 result_folder = 'model/workspace/result/'
 
-
-for cv_idx in range(0, 1): # fix k
+#'''
+for cv_idx in range(0, k):
+    print("-------")
+    print("cv_idx " + str(cv_idx) )
     for each_target in target:
+        print("---")
+        print(each_target)
         try:
             schedule_each = pd.read_csv(schedule_folder + each_target + "_cv_" + str(cv_idx)+ ".csv")
         except:
             raise ValueError("schedule file issue")
-        model.compiler.process(schedule_each, checkpoint_folder, result_folder,
+        model.compiler.process(schedule_each, result_folder,
                                df.loc[cv_train[cv_idx]], df.loc[cv_test[cv_idx]],
                                head= each_target, tail='_cv_' + str(cv_idx))
 
+#'''
 
