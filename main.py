@@ -2,10 +2,12 @@ import sampling
 import preprocess
 import info_score
 import model
+import selection
 
 import pandas as pd
 import numpy as np
 import os
+import matplotlib.pyplot as plt
 
 # -------------------------------------------------------------------
 
@@ -165,7 +167,7 @@ for cv_idx in range(0, k):
 
 result_folder = 'model/workspace/result/'
 
-#'''
+'''
 for cv_idx in range(0, k):
     print("-------")
     print("cv_idx " + str(cv_idx) )
@@ -178,7 +180,136 @@ for cv_idx in range(0, k):
             raise ValueError("schedule file issue")
         model.compiler.process(schedule_each, result_folder,
                                df.loc[cv_train[cv_idx]], df.loc[cv_test[cv_idx]],
-                               head= each_target, tail='_cv_' + str(cv_idx))
+                               head= each_target, tail='cv_' + str(cv_idx))
 
-#'''
+'''
+
+# ----------------------------------------------------------------------------------------
+
+result = []
+minimization = []
+
+for cv_idx in range(0, k):
+    for each_target in target:
+        result_name = result_folder + each_target + "_result_cv_" + str(cv_idx)+ ".csv"
+        try:
+            result_each = pd.read_csv(result_name)
+            result.append(result_each)
+        except:
+            print("result file issue")
+            print(cv_idx)
+            print(each_target)
+
+        minimization_name = result_folder + each_target + "_minimization_cv_" + str(cv_idx)+ ".txt"
+        minimization.append(np.loadtxt(minimization_name))
+
+
+
+
+
+result_plot = "model/workspace/plot/"
+'''
+for cv_idx in range(0, k):
+    preprocess.plot_hist(result[cv_idx][['test error', 'skew', 'kurtosis','time']],
+                         result_plot, tail = 'cv_' + str(cv_idx))
+    preprocess.plot_scatter(result[cv_idx][['test error']],
+                            result[cv_idx][['dof']],
+                            result_plot, tail = 'cv_' + str(cv_idx))
+    
+
+for each_target in target:
+    for cv_idx in range(0, k):
+        each_txt = np.loadtxt(result_folder + each_target + "_minimization_cv_" + str(cv_idx) + ".txt")
+        plt.hist(each_txt)
+        plt.savefig(result_plot + each_target + "_minimization_cv_" + str(cv_idx) + ".png")
+        plt.close()
+
+'''
+
+# ----------------------------------------------------------------------------------------
+
+selection_folder = 'selection/'
+
+chosen_model_per_cv = []
+selection_col = None
+
+'''
+for each_target in target:
+    for cv_idx in range(0, k):
+        model_id = selection.min_dof_within_std(result[cv_idx][['id','dof','test error']])[0]
+
+        schedule_dir = schedule_folder + each_target + "_cv_" + str(cv_idx) + ".csv"
+        schedule_file = pd.read_csv(schedule_dir)
+
+        if selection_col is None:
+            selection_col = np.append(schedule_file.columns.to_numpy(), "cv")
+
+        each_para = schedule_file[schedule_file['id'] == model_id].to_numpy().flatten()
+
+
+        chosen_model_per_cv.append(np.append(each_para, cv_idx))
+
+    chosen_model = pd.DataFrame(chosen_model_per_cv, columns=selection_col)
+    chosen_model.to_csv(selection_folder + each_target + "_schedule.csv")
+
+'''
+
+# ----------------------------------------------------------------------------------------
+
+selection_result = 'selection/result/'
+
+'''
+for each_target in target:
+    for cv_idx in range(0, k):
+        chosen_model = pd.read_csv(selection_folder + each_target + "_schedule.csv")
+        model.compiler.process(chosen_model, selection_result,
+                               df.loc[cv_train[cv_idx]], df.loc[cv_test[cv_idx]],
+                               head = each_target,
+                               tail = 'cv_' + str(cv_idx))
+
+'''
+
+# ----------------------------------------------------------------------------------------
+
+chosen_overal = pd.DataFrame(index = range(k), columns = ["id", "dof"])
+
+for each_target in target:
+    for cv_idx in range(0, k):
+        string_name = selection_result + each_target + "_result_cv_" + str(cv_idx) + ".csv"
+        per_cv_result = pd.read_csv(string_name)
+
+        chosen_overal.iloc[cv_idx] = selection.min_dof_within_std(per_cv_result)
+
+    print("---------")
+    print(each_target)
+    print(chosen_overal)
+
+# ----------------------------------------------------------------------------------------
+
+
+result_merged = pd.concat(result, keys = range(k), names = ['cv_idx'])
+minimization_merged = np.concatenate(minimization)
+
+
+model_fit_time = result_merged['time'].to_numpy()
+
+percentile = [50, 75, 90, 95]
+
+print("---------")
+print("model fitting time")
+
+for each_per in percentile:
+    print(str(each_per) + "th: " + str(np.percentile(model_fit_time, each_per)) + " seconds")
+
+print("---------")
+print("minimization fitting time")
+
+for each_per in percentile:
+    print(str(each_per) + "th: " + str(np.percentile(minimization_merged, each_per)) + " seconds")
+
+print("---------")
+print("minimization / model fitting")
+
+for each_per in percentile:
+    print(str(each_per) + "th: " + str(np.percentile(minimization_merged, each_per)/np.percentile(model_fit_time, each_per)))
 

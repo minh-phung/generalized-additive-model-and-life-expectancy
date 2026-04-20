@@ -41,5 +41,9 @@ def process(schedule, result_folder,
     out.to_csv(result_folder + head + "_result_" + tail + ".csv",
                index = False)
 
+    np.savetxt(result_folder + head + "_minimization_" + tail + ".txt",
+               mini_solver_time)
+
+
     return
 

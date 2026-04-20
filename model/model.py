@@ -77,7 +77,7 @@ def info_output(gam, X_test, y_test):
 
     dof = sum(edof_per_term(gam))
 
-    residual_test  = gam.predict(X_test) - y_test
+    residual_test  = y_test - gam.predict(X_test)
 
     test_error = (sum(residual_test**2))**(1/2) / X_test.shape[0]
 

@@ -1,0 +1,6 @@
+,id,CO2 emissions per capita,Daily calorie supply per person,GDP per capita,"Measles, first dose (MCV1)",Polio (Pol3),Tetanus (DTP3),Military expenditure (% of GDP),Political regime,"Population, total",Share of the population using the Internet,Share of the population using at least basic sanitation,Share of the labor force employed in agriculture,Share of the population with access to electricity,Life expectancy,cv
+0,23,l,s,s,l,l,l,l,r,r,l,s,s,s,t,0
+1,13,l,s,l,l,l,l,l,r,l,l,s,s,s,t,1
+2,1,l,l,l,l,l,l,l,r,l,l,s,s,s,t,2
+3,43,l,s,s,l,l,s,l,r,r,s,s,s,s,t,3
+4,37,l,s,s,l,l,l,l,r,l,s,s,s,s,t,4
