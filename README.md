@@ -23,6 +23,6 @@ Per cross validation set, the chosen model is the one the the least degrees of f
 
 The 5 models are then fitted again, this time on all 5 cross validation sets. The result is saved under 'selection/result'. The same exact overal model selection process is used on each cross validation set. It is saved in 'selection/result.csv'.
 
-Out of 5 cross validation sets, one specific model was chosen 4/5 sets, with with the constrained variation 3/4 sets. By referencing the id with the schedule, in 'selection/Life expectancy_schedule.csv', one can get the exact choices for linear, spline, and removed terms.
+Out of 5 cross validation sets, one specific model was chosen 4/5 sets, with the constrained variation 3/4 sets. By referencing the id with the schedule, in 'selection/Life expectancy_schedule.csv', one can get the exact choice for linear, spline, and removed terms.
 
 Looking at the time it takes to fit a model, the 95th percentile of the time is less than 0.2 seconds. However, in comparing the appropriate percentile with the time it takes to compute the minimization step (for finding lambdas) (percentile time of minimization step / percentile of the modeling step), at the 50th, it is almost a factor of 50. At the 95th, it is more than 100.
