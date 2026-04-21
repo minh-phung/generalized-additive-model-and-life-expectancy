@@ -204,9 +204,6 @@ for cv_idx in range(0, k):
         minimization.append(np.loadtxt(minimization_name))
 
 
-
-
-
 result_plot = "model/workspace/plot/"
 '''
 for cv_idx in range(0, k):
@@ -283,6 +280,7 @@ for each_target in target:
     print("---------")
     print(each_target)
     print(chosen_overal)
+    chosen_overal.to_csv('selection/' + each_target + "_result.csv")
 
 # ----------------------------------------------------------------------------------------
 
