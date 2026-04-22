@@ -27,6 +27,7 @@ Out of 5 cross validation sets, one specific model was chosen 4/5 sets, with the
 
 Looking at the time it takes to fit a model, the 95th percentile is less than 0.2 seconds. However, in comparing the appropriate percentile with the time it takes to compute the minimization step (for finding lambdas) (percentile time of minimization step / percentile of the modeling step), at the 50th, it is almost a factor of 50. At the 95th, it is more than 100.
 
-References
-Hastie et al. (2001). Elements of Statistical Learning.
+
+References:
+Hastie et al. (2001). Elements of Statistical Learning.;
 Murphy, Kevin. (2012). Machine Learning - A Probabilistic Perspective.
